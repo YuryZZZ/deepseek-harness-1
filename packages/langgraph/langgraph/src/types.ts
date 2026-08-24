@@ -26,6 +26,7 @@ export type FlowNode =
   | { kind: 'sequential'; name: string; steps: FlowNode[] }
   | { kind: 'parallel'; name: string; branches: FlowNode[] }
   | { kind: 'loop'; name: string; times: number; body: FlowNode }
+  | { kind: 'conditional'; name: string; when: string; then: FlowNode; else?: FlowNode }
 
 /** A declarative multi-node flow specification. */
 export interface FlowSpec {

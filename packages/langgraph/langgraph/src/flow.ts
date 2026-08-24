@@ -65,6 +65,11 @@ function renderNode(node: FlowNode, depth: number): string[] {
       return [`${pad}${node.name} (parallel):`, ...node.branches.flatMap(b => renderNode(b, depth + 1))]
     case 'loop':
       return [`${pad}${node.name} (loop ×${node.times}):`, ...renderNode(node.body, depth + 1)]
+    case 'conditional': {
+      const out = [`${pad}${node.name} (if ${node.when}):`, ...renderNode(node.then, depth + 1)]
+      if (node.else !== undefined) out.push(`${pad}${node.name} (else):`, ...renderNode(node.else, depth + 1))
+      return out
+    }
   }
 }
 
@@ -87,6 +92,7 @@ export function renderLangGraphGuidance(spec: FlowSpec): string {
     '- `sequential` nodes connect with edges in order.',
     '- `parallel` branches fan out from one node and join with a merge node (or a reducer that combines their state keys).',
     '- `loop` nodes use `add_conditional_edges` to route back to the entry node while a counter in state is below the bound.',
+    '- `conditional` nodes use `add_conditional_edges` to route to the `then` or `else` branch based on a state predicate.',
     '- Keep state a TypedDict; each node writes only its own keys and returns a partial update.',
     '- Tools, MCP, and search nodes call their capability and store the result in state; keep outputs JSON-serializable.',
     '- Add a checkpoint for long or resumable flows.',
