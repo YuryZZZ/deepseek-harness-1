@@ -35,6 +35,10 @@
     "@deepseek-ai/dsh-system-prompt": "workspace:^",
     "@deepseek-ai/dsh-tools": "workspace:^",
     "@deepseek-ai/dsh-langfuse": "workspace:^",
+    "@deepseek-ai/dsh-subagent": "workspace:^",
+    "@deepseek-ai/dsh-web": "workspace:^",
+    "@deepseek-ai/dsh-agent": "workspace:^",
+    "@deepseek-ai/dsh-llm": "workspace:^",
     "@deepseek-ai/dsh-invariants": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   },
@@ -42,6 +46,10 @@
     "@deepseek-ai/dsh-system-prompt": "workspace:^",
     "@deepseek-ai/dsh-tools": "workspace:^",
     "@deepseek-ai/dsh-langfuse": "workspace:^",
+    "@deepseek-ai/dsh-subagent": "workspace:^",
+    "@deepseek-ai/dsh-web": "workspace:^",
+    "@deepseek-ai/dsh-agent": "workspace:^",
+    "@deepseek-ai/dsh-llm": "workspace:^",
     "@deepseek-ai/dsh-invariants": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   }

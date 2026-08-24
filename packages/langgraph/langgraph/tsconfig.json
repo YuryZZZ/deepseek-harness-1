@@ -24,6 +24,18 @@
       "path": "../../langfuse/langfuse"
     },
     {
+      "path": "../../subagent/subagent"
+    },
+    {
+      "path": "../../web/web"
+    },
+    {
+      "path": "../../core/agent"
+    },
+    {
+      "path": "../../llm/llm"
+    },
+    {
       "path": "../../runtime-diagnostics/invariants"
     }
   ]

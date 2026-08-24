@@ -12,6 +12,7 @@ LangGraph/LangChain flow-intelligence plugin. Registers a prompt section encodin
 | `langgraph_patterns` | List the available industry-leading flow patterns. |
 | `langgraph_topics` | List the available LangChain/LangGraph/deep-agent knowledge topics. |
 | `langgraph_knowledge` | Fetch full engineering knowledge on a topic (langchain, langgraph, deep-agents, nodes, system-instructions, dynamic-prompts). |
+| `langgraph_run` | Execute a flow spec end-to-end (parallel/sequential/parallel-map/loop/conditional over tools, MCP, search, and subagents). |
 
 Requires `@deepseek-ai/dsh-langfuse` (the `ctx.langfuse` service) and `@deepseek-ai/dsh-tools` in the same composition.
 

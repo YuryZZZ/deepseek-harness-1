@@ -12,6 +12,7 @@ import type { LangfuseService } from '@deepseek-ai/dsh-langfuse'
 import { reconstructFlow, renderLangGraphGuidance } from './flow.ts'
 import { designFlow, FLOW_PATTERNS } from './patterns.ts'
 import { KNOWLEDGE_TOPICS, knowledgeTopic, listKnowledgeTopics } from './knowledge.ts'
+import { runFlow } from './executor.ts'
 import type { FlowSpec } from './types.ts'
 
 export { reconstructFlow, renderLangGraphGuidance } from './flow.ts'
@@ -19,10 +20,11 @@ export { designFlow, FLOW_PATTERNS } from './patterns.ts'
 export type { FlowPattern } from './patterns.ts'
 export { KNOWLEDGE_TOPICS, knowledgeTopic, listKnowledgeTopics } from './knowledge.ts'
 export type { KnowledgeTopic } from './knowledge.ts'
+export { runFlow } from './executor.ts'
 export type { FlowNode, FlowSpec, FlowStep } from './types.ts'
 
 export const name = 'langgraph'
-export const inject = ['systemPrompt', 'tools', 'langfuse']
+export const inject = ['systemPrompt', 'tools', 'langfuse', 'web', 'subagents']
 
 /** Prompt section encoding LangGraph/LangChain flow-design knowledge. */
 const FLOW_DESIGN_KNOWLEDGE = `LangGraph / LangChain multi-node flow design:
@@ -135,6 +137,21 @@ export function apply(ctx: Context) {
       const topic = knowledgeTopic(args.topic)
       if (topic === undefined) return Promise.resolve(`Unknown topic "${args.topic}". Available topics:\n${listKnowledgeTopics()}`)
       return Promise.resolve(`${topic.title}\n${topic.content}`)
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'langgraph_run',
+    description: 'Execute a flow spec end-to-end (parallel/sequential/parallel-map/loop/conditional over tools, MCP, search, and subagents) and return the final state.',
+    parameters: {
+      spec: { type: 'string', required: true, description: 'JSON FlowSpec to execute.' },
+    },
+    output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },
+    async execute(args, exec) {
+      if (exec.agent === undefined) throw new Error('langgraph_run requires an owning agent to delegate subagents')
+      const spec = JSON.parse(args.spec) as FlowSpec
+      const result = await runFlow(ctx, exec.agent, exec.signal, spec)
+      return JSON.stringify(result, null, 2)
     },
   }))
 }
