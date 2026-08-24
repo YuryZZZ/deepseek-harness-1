@@ -1,0 +1,36 @@
+# Langfuse + LangGraph plugin wiring.
+#
+# Apply on top of any profile that already provides ctx.tools / ctx.systemPrompt
+# (e.g. the `web` or `headless` template):
+#   dsh --profile <name> --patch examples/langfuse/cordis.yml
+#
+# Requires LANGFUSE_PUBLIC_KEY / LANGFUSE_SECRET_KEY in the process environment
+# (or a `.env` loaded by the app bin). Never inline credentials here.
+
+- insert:
+    # Read/analyze/write the deployment Langfuse server; the poller keeps a live
+    # reachability snapshot so the tools are always ready.
+    - id: langfuse
+      name: '@deepseek-ai/dsh-langfuse'
+      config:
+        baseUrl: 'https://langfuse-server-699552818896.us-central1.run.app'
+        publicKey: !!js process.env.LANGFUSE_PUBLIC_KEY
+        secretKey: !!js process.env.LANGFUSE_SECRET_KEY
+        projectId: 'LegalAI-Adjudication'
+        pollIntervalMs: 300000
+
+    # Model-facing Langfuse tools (status/traces/trace/metrics/scores/analyze/score/record).
+    - id: tool-langfuse
+      name: '@deepseek-ai/dsh-tool-langfuse'
+
+    # Record the harness' own sessions into Langfuse (dsh is a source too).
+    - id: langfuse-ingest
+      name: '@deepseek-ai/dsh-langfuse-ingest'
+      config:
+        tracePrefix: 'legalai-dsh'
+        tags: ['legal-agent-v4', 'production']
+
+    # LangGraph/LangChain flow intelligence: flow-design knowledge + tools to
+    # reconstruct and design multi-node flows, monitored by the Langfuse rows above.
+    - id: langgraph
+      name: '@deepseek-ai/dsh-langgraph'
