@@ -94,8 +94,30 @@ export interface StreamableHttpConfig {
   reconnect?: ReconnectConfig
 }
 
-/** Configuration for one stdio or Streamable HTTP MCP server. */
-export type Config = StdioConfig | StreamableHttpConfig
+/** Config for connecting to an MCP server over SSE transport. */
+export interface SseConfig {
+  /** Selects SSE transport. */
+  transport: 'sse'
+  /**
+   * Stable local namespace for this server's model-facing tool names
+   * (`mcp__<serverName>__<rawName>`). Must match `[A-Za-z0-9_-]{1,32}` and be
+   * unique across live mcp-client instances.
+   */
+  serverName: string
+  /** MCP SSE endpoint URL. */
+  url: string
+  /** Additional headers attached to MCP requests. */
+  headers: Record<string, string>
+  /** Per-tool-call timeout in milliseconds. */
+  toolCallTimeoutMs: number
+  /** Fail plugin activation when the initial connection or tool synchronization fails. */
+  failOnStartupError: boolean
+  /** Automatic reconnect policy after a lost connection; omission uses the defaults. */
+  reconnect?: ReconnectConfig
+}
+
+/** Configuration for one stdio, Streamable HTTP, or SSE MCP server. */
+export type Config = StdioConfig | StreamableHttpConfig | SseConfig
 
 const Reconnect: z<ReconnectConfig> = z.object({
   enabled: z.boolean().default(RECONNECT_DEFAULTS.enabled),
@@ -118,6 +140,15 @@ export const Config = z.union([
   }),
   z.object({
     transport: z.const('streamable-http'),
+    serverName: z.string().required().pattern(SERVER_NAME_PATTERN),
+    url: z.string().required(),
+    headers: z.dict(String).default({}),
+    toolCallTimeoutMs: z.number().default(DEFAULT_TOOL_CALL_TIMEOUT_MS),
+    failOnStartupError: z.boolean().default(false),
+    reconnect: Reconnect,
+  }),
+  z.object({
+    transport: z.const('sse'),
     serverName: z.string().required().pattern(SERVER_NAME_PATTERN),
     url: z.string().required(),
     headers: z.dict(String).default({}),

@@ -9,6 +9,7 @@
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
+import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
 import { scrubbedParentEnv } from '@deepseek-ai/dsh-subprocess'
 import type { Config } from './index.ts'
 
@@ -43,6 +44,11 @@ export function createTransport(config: Config): Transport {
       // mismatch with the Transport interface); the SDK constructed the
       // object, so the cast records only that widening.
       return new StreamableHTTPClientTransport(
+        new URL(config.url),
+        { requestInit: { headers: config.headers } },
+      ) as Transport
+    case 'sse':
+      return new SSEClientTransport(
         new URL(config.url),
         { requestInit: { headers: config.headers } },
       ) as Transport

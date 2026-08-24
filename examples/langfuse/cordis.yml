@@ -37,11 +37,9 @@
 
     # mcp-cloud-hub: the shared remote MCP hub. Its tools register on ctx.tools as
     # mcp__cloud-hub__<tool>, so flow `mcp` steps can call them directly.
-    # NOTE: the hub currently serves SSE; dsh-mcp-client needs streamable-http, so
-    # migrate the hub to streamable-http (or add SSE support) before enabling this.
     - id: mcp-cloud-hub
       name: '@deepseek-ai/dsh-mcp-client'
       config:
         serverName: cloud-hub
-        transport: streamable-http
-        url: 'https://mcp-cloud-hub-30591337479-lbrrkcqwvq-ew.a.run.app/mcp'
+        transport: sse
+        url: !!js '`https://mcp-cloud-hub-30591337479-lbrrkcqwvq-ew.a.run.app/sse?api_key=${process.env.MCP_CLOUD_HUB_API_KEY ?? ""}`'

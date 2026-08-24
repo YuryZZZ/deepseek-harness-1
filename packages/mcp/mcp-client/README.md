@@ -27,6 +27,13 @@ One plugin instance per MCP server in `cordis.yml`:
     url: http://localhost:3000/mcp
     headers:
       Authorization: !!js '`Bearer ${process.env.MCP_TOKEN}`'
+
+- id: mcp-cloud-hub
+  name: '@deepseek-ai/dsh-mcp-client'
+  config:
+    serverName: cloud-hub
+    transport: sse
+    url: !!js '`https://mcp-cloud-hub.example.run.app/sse?api_key=${process.env.MCP_CLOUD_HUB_API_KEY}`'
 ```
 
 The model sees `mcp__github__create_issue`, `mcp__web__search`, … — the same server-qualified shape Claude Code and Codex use. HMR hot-swaps: editing the entry triggers disconnect + reconnect without process restart; an unchanged `serverName` reproduces identical tool names.
@@ -35,7 +42,7 @@ The model sees `mcp__github__create_issue`, `mcp__web__search`, … — the same
 
 | Field | Transport | Required | Description |
 |---|---|---|---|
-| `transport` | both | yes | `"stdio"` or `"streamable-http"` |
+| `transport` | both | yes | `"stdio"`, `"streamable-http"`, or `"sse"` |
 | `serverName` | both | yes | Namespace for this server's model-facing tool names; `[A-Za-z0-9_-]{1,32}`, unique across live instances |
 | `command` | stdio | yes | Executable to spawn |
 | `args` | stdio | no | Arguments passed to the command |
