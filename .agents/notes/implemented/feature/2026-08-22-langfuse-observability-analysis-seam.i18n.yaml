@@ -1,0 +1,6 @@
+# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
+# side as of the last confirmed-consistent state. Both languages carry equal authority;
+# after editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-08-22-langfuse-observability-analysis-seam.md
+2026-08-22-langfuse-observability-analysis-seam.md: 137fd65daa1e66634ecaf95d358c64dd9ea8b870
+2026-08-22-langfuse-observability-analysis-seam.zh.md: 4f635202e9209f8842b87f638645808f7cd6b9bf

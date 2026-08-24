@@ -900,6 +900,30 @@ export interface Config {
 
 Source: [`packages/jobs/jobs-local/src/index.ts:31`](../packages/jobs/jobs-local/src/index.ts)
 
+<a id="deepseek-aidsh-langfuse"></a>
+
+## `@deepseek-ai/dsh-langfuse`
+
+```ts config-catalog
+/** Plugin configuration; `static Config` supplies the defaults. */
+export interface Config {
+  /** Base URL of the Langfuse server, no trailing slash. */
+  baseUrl: string
+  /** Langfuse public key (client id). */
+  publicKey: string
+  /** Langfuse secret key. */
+  secretKey: string
+  /** Optional project id to scope reads to one workspace. */
+  projectId?: string
+  /** Background refresh interval in milliseconds; 0 disables the poller. */
+  pollIntervalMs?: number
+  /** Default analysis window in days. */
+  defaultWindowDays?: number
+}
+```
+
+Source: [`packages/langfuse/langfuse/src/index.ts:45`](../packages/langfuse/langfuse/src/index.ts)
+
 <a id="deepseek-aidsh-llm-deepseek"></a>
 
 ## `@deepseek-ai/dsh-llm-deepseek`
@@ -3254,6 +3278,7 @@ These load from a `cordis.yml` entry with no `config:` block; they declare no co
 - `@deepseek-ai/dsh-tool-ask-user` — requires `tools` · `userQuestions` ([`packages/interaction/tool-ask-user/src/index.ts`](../packages/interaction/tool-ask-user/src/index.ts))
 - `@deepseek-ai/dsh-tool-call-timeout-policy` — requires `tools` ([`packages/guard/timeout-policy/src/index.ts`](../packages/guard/timeout-policy/src/index.ts))
 - `@deepseek-ai/dsh-tool-cordis` — requires `tools` · `systemPrompt` · `dynamicCordisRunner` · `cordisInspect` ([`packages/extensions/tool-cordis/src/index.ts`](../packages/extensions/tool-cordis/src/index.ts))
+- `@deepseek-ai/dsh-tool-langfuse` — requires `tools` · `langfuse` ([`packages/langfuse/tool-langfuse/src/index.ts`](../packages/langfuse/tool-langfuse/src/index.ts))
 - `@deepseek-ai/dsh-tool-subagent-control` — requires `tools` · `subagents` ([`packages/subagent/tool-subagent-control/src/index.ts`](../packages/subagent/tool-subagent-control/src/index.ts))
 - `@deepseek-ai/dsh-user-questions` ([`packages/interaction/user-questions/src/index.ts`](../packages/interaction/user-questions/src/index.ts))
 - `@deepseek-ai/dsh-workspace` — requires `storageDomain` · `sessionPersistence` ([`packages/workspace/workspace/src/index.ts`](../packages/workspace/workspace/src/index.ts))

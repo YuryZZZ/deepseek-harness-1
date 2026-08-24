@@ -882,6 +882,60 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
     ],
   },
   {
+    key: 'langfuse',
+    summary: 'Persistent Langfuse service.',
+    description: 'Persistent Langfuse service. Mounted for the lifetime of the composition, it keeps a live reachability snapshot (refreshed at boot and on an optional interval) and exposes an on-demand analysis pass over recent telemetry.',
+    methods: [
+      {
+        signature: 'readonly client: LangfuseClient',
+        description: 'The underlying HTTP client; public so consumers can run raw queries.',
+        parameters: [],
+      },
+      {
+        signature: 'getStatus(): LiveStatus',
+        description: 'Return the cached reachability snapshot without making a request.',
+        parameters: [],
+        returns: 'the current snapshot.',
+      },
+      {
+        signature: 'getLatestReport(): AnalysisReport | null',
+        description: 'Return the most recent analysis report, or `null` if none has run.',
+        parameters: [],
+        returns: 'the latest report, if any.',
+      },
+      {
+        signature: 'async health(): Promise<LangfuseHealth>',
+        description: 'Fetch the server health and version.',
+        parameters: [],
+        returns: 'the health response.',
+      },
+      {
+        signature: 'async refresh(): Promise<LiveStatus>',
+        description: 'Refresh the live reachability snapshot from the server. Never throws; failures are recorded in the snapshot\'s `lastError`.',
+        parameters: [],
+        returns: 'the updated snapshot.',
+      },
+      {
+        signature: 'async analyze(windowDays: number = this.defaultWindowDays): Promise<AnalysisReport>',
+        description: 'Run a full analysis pass over the most recent telemetry.',
+        parameters: [{ name: 'windowDays', description: 'analysis window; defaults to {@link defaultWindowDays}.' }],
+        returns: 'the analysis report, also cached via {@link getLatestReport}.',
+      },
+      {
+        signature: 'async score(input: LangfuseScoreInput): Promise<unknown>',
+        description: 'Write an evaluation score back to Langfuse.',
+        parameters: [{ name: 'input', description: 'the score to create.' }],
+        returns: 'the created score.',
+      },
+      {
+        signature: 'async ingest(batch: LangfuseIngestionEvent[]): Promise<unknown>',
+        description: 'Ingest a batch of trace/observation/score events into Langfuse.',
+        parameters: [{ name: 'batch', description: 'the events to ingest.' }],
+        returns: 'the ingestion result.',
+      },
+    ],
+  },
+  {
     key: 'llm',
     summary: 'The abstract `llm` service: an adapter registry plus a streaming model-call API, interceptable via the `llm/stream` waterfall.',
     description: 'The abstract `llm` service: an adapter registry plus a streaming model-call API, interceptable via the `llm/stream` waterfall.',
@@ -2761,6 +2815,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export type AgentStatus = \'idle\' | \'running\';',
   },
   {
+    name: 'AnalysisReport',
+    declaration: 'export interface AnalysisReport {\n    from: string;\n    to: string;\n    traceCount: number;\n    observationCount: number;\n    totalCost: number;\n    totalInputTokens: number;\n    totalOutputTokens: number;\n    errorCount: number;\n    errorRate: number;\n    distinctModels: number;\n    distinctUsers: number;\n    scoredTraceCount: number;\n    models: ModelBreakdown[];\n    scoreStats: ScoreStat[];\n    insights: Insight[];\n    recommendations: Recommendation[];\n    researchDirections: string[];\n}',
+  },
+  {
     name: 'ApprovalOutcome',
     declaration: 'export type ApprovalOutcome = \'allowed-once\' | \'rejected\' | \'cancelled\' | \'unavailable\';',
   },
@@ -3281,6 +3339,18 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export type InboxTarget = \'next-turn\' | \'next-step\';',
   },
   {
+    name: 'Insight',
+    declaration: 'export interface Insight {\n    severity: InsightSeverity;\n    category: InsightCategory;\n    title: string;\n    detail: string;\n    evidence: string;\n}',
+  },
+  {
+    name: 'InsightCategory',
+    declaration: 'export type InsightCategory = \'cost\' | \'latency\' | \'quality\' | \'reliability\' | \'usage\' | \'evaluation\';',
+  },
+  {
+    name: 'InsightSeverity',
+    declaration: 'export type InsightSeverity = \'info\' | \'warning\' | \'critical\';',
+  },
+  {
     name: 'InvariantFailure',
     declaration: 'export type InvariantFailure = (message: string) => never;',
   },
@@ -3383,6 +3453,70 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'KvUnitDescriptor',
     declaration: 'export interface KvUnitDescriptor {\n    readonly name: string;\n    readonly version: number;\n    readonly tables: readonly string[];\n    readonly hasGlobal: boolean;\n}',
+  },
+  {
+    name: 'LangfuseClient',
+    declaration: 'export class LangfuseClient {\n    constructor(config: {\n        baseUrl: string;\n        publicKey: string;\n        secretKey: string;\n    });\n    async health(): Promise<LangfuseHealth>;\n    async listTraces(query: LangfuseQuery = {}): Promise<LangfuseList<LangfuseTraceWithDetails>>;\n    async getTrace(traceId: string): Promise<LangfuseTraceWithDetails>;\n    async listObservations(query: LangfuseQuery & {\n        type?: string;\n        traceId?: string;\n    } = {}): Promise<LangfuseList<LangfuseObservation>>;\n    async listScores(query: LangfuseQuery & {\n        name?: string;\n    } = {}): Promise<LangfuseList<LangfuseScore>>;\n    async metricsDaily(fromTimestamp: string, toTimestamp: string): Promise<{\n        data: LangfuseDailyMetric[];\n    }>;\n    async numericMetric(name: string, fromTimestamp: string, toTimestamp: string, aggregate: \'sum\' | \'avg\' | \'count\' = \'sum\'): Promise<LangfuseNumericMetric>;\n    async createScore(input: LangfuseScoreInput): Promise<unknown>;\n    async ingest(batch: LangfuseIngestionEvent[]): Promise<unknown>;\n}',
+  },
+  {
+    name: 'LangfuseDailyMetric',
+    declaration: 'export interface LangfuseDailyMetric {\n    date: string;\n    countTraces: number;\n    countObservations: number;\n    totalCost: number;\n    usage: LangfuseDailyUsage[];\n}',
+  },
+  {
+    name: 'LangfuseDailyUsage',
+    declaration: 'export interface LangfuseDailyUsage {\n    model?: string;\n    inputUsage?: number;\n    outputUsage?: number;\n    totalUsage?: number;\n    totalCost?: number;\n    countObservations?: number;\n    countTraces?: number;\n}',
+  },
+  {
+    name: 'LangfuseHealth',
+    declaration: 'export interface LangfuseHealth {\n    status: string;\n    version?: string;\n}',
+  },
+  {
+    name: 'LangfuseIngestionEvent',
+    declaration: 'export interface LangfuseIngestionEvent {\n    id: string;\n    type: \'trace-create\' | \'observation-create\' | \'observation-update\' | \'score-create\';\n    timestamp: string;\n    body: Record<string, unknown>;\n}',
+  },
+  {
+    name: 'LangfuseList',
+    declaration: 'export interface LangfuseList<T> {\n    data: T[];\n    meta: LangfuseMeta;\n}',
+  },
+  {
+    name: 'LangfuseMeta',
+    declaration: 'export interface LangfuseMeta {\n    page: number;\n    limit: number;\n    totalItems: number;\n    totalPages: number;\n}',
+  },
+  {
+    name: 'LangfuseNumericMetric',
+    declaration: 'export interface LangfuseNumericMetric {\n    data: Array<{\n        time?: string;\n        value: number;\n    }>;\n}',
+  },
+  {
+    name: 'LangfuseObservation',
+    declaration: 'export interface LangfuseObservation {\n    id: string;\n    traceId?: string;\n    parentObservationId?: string;\n    type: \'GENERATION\' | \'SPAN\' | \'EVENT\';\n    name: string;\n    startTime: string;\n    endTime?: string;\n    model?: string;\n    input?: unknown;\n    output?: unknown;\n    promptTokens?: number;\n    completionTokens?: number;\n    totalTokens?: number;\n    totalCost?: number;\n    level?: \'DEBUG\' | \'DEFAULT\' | \'WARNING\' | \'ERROR\';\n    statusMessage?: string;\n    usage?: LangfuseUsage;\n}',
+  },
+  {
+    name: 'LangfuseQuery',
+    declaration: 'export interface LangfuseQuery {\n    limit?: number;\n    page?: number;\n    fromTimestamp?: string;\n    toTimestamp?: string;\n    name?: string;\n    userId?: string;\n    sessionId?: string;\n    tags?: string[];\n}',
+  },
+  {
+    name: 'LangfuseScore',
+    declaration: 'export interface LangfuseScore {\n    id: string;\n    traceId: string;\n    observationId?: string;\n    name: string;\n    value: number;\n    dataType?: \'NUMERIC\' | \'BOOLEAN\' | \'CATEGORICAL\';\n    stringValue?: string;\n    comment?: string;\n    timestamp: string;\n}',
+  },
+  {
+    name: 'LangfuseScoreInput',
+    declaration: 'export interface LangfuseScoreInput {\n    traceId?: string;\n    observationId?: string;\n    name: string;\n    value: number;\n    comment?: string;\n    dataType?: \'NUMERIC\' | \'BOOLEAN\' | \'CATEGORICAL\';\n}',
+  },
+  {
+    name: 'LangfuseTrace',
+    declaration: 'export interface LangfuseTrace {\n    id: string;\n    timestamp: string;\n    name: string;\n    input?: unknown;\n    output?: unknown;\n    sessionId?: string;\n    userId?: string;\n    release?: string;\n    version?: string;\n    tags?: string[];\n    metadata?: Record<string, unknown>;\n}',
+  },
+  {
+    name: 'LangfuseTraceWithDetails',
+    declaration: 'export interface LangfuseTraceWithDetails extends LangfuseTrace {\n    observations?: LangfuseObservation[];\n    scores?: LangfuseScore[];\n    totalCost?: number;\n    latency?: number;\n}',
+  },
+  {
+    name: 'LangfuseUsage',
+    declaration: 'export interface LangfuseUsage {\n    input?: number;\n    output?: number;\n    total?: number;\n    unit?: string;\n}',
+  },
+  {
+    name: 'LiveStatus',
+    declaration: 'export interface LiveStatus {\n    reachable: boolean;\n    lastSyncAt: string | null;\n    lastError: string | null;\n    recentTraceCount: number;\n    recentTotalCost: number;\n}',
   },
   {
     name: 'LlmAdapter',
@@ -3577,6 +3711,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface MessageSourceMap {\n    user: {\n        kind: \'user\';\n    };\n    plugin: {\n        kind: \'plugin\';\n        plugin: string;\n    } & ContextFormed;\n    model: ModelMessageSource;\n    tool: ToolMessageSource;\n}',
   },
   {
+    name: 'ModelBreakdown',
+    declaration: 'export interface ModelBreakdown {\n    model: string;\n    traces: number;\n    observations: number;\n    totalCost: number;\n    totalInputTokens: number;\n    totalOutputTokens: number;\n    avgLatencyMs: number | null;\n    errorCount: number;\n    suspicious: boolean;\n}',
+  },
+  {
     name: 'ModelMessageSource',
     declaration: 'export interface ModelMessageSource extends AssistantProvenance {\n    kind: \'model\';\n}',
   },
@@ -3695,6 +3833,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'ReasoningEffortId',
     declaration: 'export type ReasoningEffortId = Branded<\'ReasoningEffortId\'>;',
+  },
+  {
+    name: 'Recommendation',
+    declaration: 'export interface Recommendation {\n    category: InsightCategory;\n    title: string;\n    action: string;\n    expectedImpact: string;\n    effort: \'low\' | \'medium\' | \'high\';\n}',
   },
   {
     name: 'RedactedSecret',
@@ -3823,6 +3965,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'ScopeKey',
     declaration: 'export type ScopeKey = object;',
+  },
+  {
+    name: 'ScoreStat',
+    declaration: 'export interface ScoreStat {\n    name: string;\n    count: number;\n    avg: number;\n    min: number;\n    max: number;\n}',
   },
   {
     name: 'SearchFileMatches',

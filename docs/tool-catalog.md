@@ -41,6 +41,7 @@ This table connects model-visible tool names to the plugin package and service s
 | `@deepseek-ai/dsh-tool-todo` | `todo_write` | `ctx.tools`, `owning Agent session` | `tool/call`, `todo/write`, `tool/result` | - | todo_write is session-owned state; UIs render the latest todo/write event as a checklist. `allowParallelInProgress` is required with no default, so the catalog states its choice: `true`, whose description invites several `in_progress` items. A deployment choosing `false` receives the same tool with a description asking for exactly one active task. |
 | `@deepseek-ai/dsh-tool-workflow` | `workflow` | `ctx.tools`, `ctx.workflowEngine`, `ctx.systemPrompt`, `a calling Agent (exec.agent parents the script children)` | `tool/call`, `tool/result` | - | - |
 | `@deepseek-ai/dsh-tool-web` | `web_fetch`, `web_search` | `ctx.tools`, `ctx.web`, `ctx.systemPrompt` | `tool/call`, `tool/result` | - | web_search and web_fetch keep provider selection behind ctx.web so model-visible schemas stay stable across backend swaps. |
+| `@deepseek-ai/dsh-tool-langfuse` | `langfuse_analyze`, `langfuse_metrics`, `langfuse_record`, `langfuse_score`, `langfuse_scores`, `langfuse_status`, `langfuse_trace`, `langfuse_traces` | `ctx.tools`, `ctx.langfuse` | `tool/call`, `tool/result` | - | langfuse_status/traces/trace/metrics/scores/analyze read the deployment Langfuse server; credentials come from configuration in real deployments. |
 
 <a id="deepseek-aidsh-tool-ask-user"></a>
 
@@ -2219,3 +2220,198 @@ Search the web for current information. Provide 1–4 queries in the required qu
 Source: [`packages/web/tool-web/src/index.ts`](../packages/web/tool-web/src/index.ts)
 
 web_search and web_fetch keep provider selection behind ctx.web so model-visible schemas stay stable across backend swaps.
+
+<a id="deepseek-aidsh-tool-langfuse"></a>
+
+## `@deepseek-ai/dsh-tool-langfuse`
+
+### `langfuse_analyze`
+
+Run a full analysis of recent Langfuse telemetry and return prioritized insights, recommendations, and research directions.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "windowDays": {
+      "type": "number",
+      "description": "Analysis window in days (default: service default, usually 7)."
+    }
+  }
+}
+```
+
+Source: [`packages/langfuse/tool-langfuse/src/index.ts`](../packages/langfuse/tool-langfuse/src/index.ts)
+
+### `langfuse_metrics`
+
+Report daily Langfuse metrics (traces, observations, cost) over a window.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "days": {
+      "type": "number",
+      "description": "Number of days to cover (default 7)."
+    }
+  }
+}
+```
+
+Source: [`packages/langfuse/tool-langfuse/src/index.ts`](../packages/langfuse/tool-langfuse/src/index.ts)
+
+### `langfuse_record`
+
+Record a custom trace (a prompt, result, or workflow step) into Langfuse.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Trace name, e.g. \"prompt-experiment\" or \"manual-review\"."
+    },
+    "input": {
+      "type": "string",
+      "description": "Input text or prompt."
+    },
+    "output": {
+      "type": "string",
+      "description": "Output or result text."
+    },
+    "tags": {
+      "type": "string",
+      "description": "Comma-separated tags."
+    }
+  },
+  "required": [
+    "name"
+  ]
+}
+```
+
+Source: [`packages/langfuse/tool-langfuse/src/index.ts`](../packages/langfuse/tool-langfuse/src/index.ts)
+
+### `langfuse_score`
+
+Write an evaluation score or feedback back to a Langfuse trace or observation.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Score name, e.g. \"accuracy\" or \"quality_score\"."
+    },
+    "value": {
+      "type": "number",
+      "description": "Numeric score value."
+    },
+    "traceId": {
+      "type": "string",
+      "description": "Optional trace id to attach the score to."
+    },
+    "observationId": {
+      "type": "string",
+      "description": "Optional observation id to attach the score to."
+    },
+    "comment": {
+      "type": "string",
+      "description": "Optional human-readable comment."
+    }
+  },
+  "required": [
+    "name",
+    "value"
+  ]
+}
+```
+
+Source: [`packages/langfuse/tool-langfuse/src/index.ts`](../packages/langfuse/tool-langfuse/src/index.ts)
+
+### `langfuse_scores`
+
+List recent Langfuse evaluation scores, optionally filtered by score name.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "days": {
+      "type": "number",
+      "description": "Number of days to cover (default 7)."
+    },
+    "name": {
+      "type": "string",
+      "description": "Optional score-name filter."
+    }
+  }
+}
+```
+
+Source: [`packages/langfuse/tool-langfuse/src/index.ts`](../packages/langfuse/tool-langfuse/src/index.ts)
+
+### `langfuse_status`
+
+Check whether the Langfuse observability server is reachable and report recent trace and cost activity.
+
+```json
+{
+  "type": "object",
+  "properties": {}
+}
+```
+
+Source: [`packages/langfuse/tool-langfuse/src/index.ts`](../packages/langfuse/tool-langfuse/src/index.ts)
+
+### `langfuse_trace`
+
+Fetch one Langfuse trace (flow) with its observations (generations) and scores.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "traceId": {
+      "type": "string",
+      "description": "The trace id."
+    }
+  },
+  "required": [
+    "traceId"
+  ]
+}
+```
+
+Source: [`packages/langfuse/tool-langfuse/src/index.ts`](../packages/langfuse/tool-langfuse/src/index.ts)
+
+### `langfuse_traces`
+
+List recent Langfuse traces (flows), optionally filtered by name.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "limit": {
+      "type": "number",
+      "description": "Maximum traces to return (default 20)."
+    },
+    "name": {
+      "type": "string",
+      "description": "Optional trace-name substring filter."
+    },
+    "hoursAgo": {
+      "type": "number",
+      "description": "Look back this many hours (default 24)."
+    }
+  }
+}
+```
+
+Source: [`packages/langfuse/tool-langfuse/src/index.ts`](../packages/langfuse/tool-langfuse/src/index.ts)
+
+langfuse_status/traces/trace/metrics/scores/analyze read the deployment Langfuse server; credentials come from configuration in real deployments.

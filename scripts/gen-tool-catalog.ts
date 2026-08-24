@@ -66,6 +66,8 @@ import * as ToolWeb from '@deepseek-ai/dsh-tool-web'
 import VmWorkflowEngine from '@deepseek-ai/dsh-workflow-worker-thread'
 import * as ToolRalph from '@deepseek-ai/dsh-tool-ralph'
 import * as ToolWorkflow from '@deepseek-ai/dsh-tool-workflow'
+import { LangfuseService } from '@deepseek-ai/dsh-langfuse'
+import * as ToolLangfuse from '@deepseek-ai/dsh-tool-langfuse'
 import { githubSlug } from './verify-md-links.ts'
 
 /** Attachment seam marker that makes the attachments-conditional `read_image` schema harvestable. */
@@ -605,6 +607,26 @@ const TOOL_PACKAGES: ToolPackage[] = [
     },
     note:
       'web_search and web_fetch keep provider selection behind ctx.web so model-visible schemas stay stable across backend swaps.',
+  },
+  {
+    pkg: '@deepseek-ai/dsh-tool-langfuse',
+    dir: 'tool-langfuse',
+    source: 'packages/langfuse/tool-langfuse/src/index.ts',
+    requires: ['ctx.tools', 'ctx.langfuse'],
+    writes: ['tool/call', 'tool/result'],
+    async mount(ctx) {
+      // The service opens no live connection during schema harvest; a dummy
+      // baseUrl is enough for the tools to register their schemas.
+      await ctx.plugin(LangfuseService, {
+        baseUrl: 'http://127.0.0.1:9',
+        publicKey: 'pk-lf-harvest',
+        secretKey: 'sk-lf-harvest',
+        pollIntervalMs: 0,
+      })
+      await ctx.plugin(ToolLangfuse)
+    },
+    note:
+      'langfuse_status/traces/trace/metrics/scores/analyze read the deployment Langfuse server; credentials come from configuration in real deployments.',
   },
 ]
 

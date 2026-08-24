@@ -194,9 +194,17 @@ const SERVICE_ROLES: ServiceRole[] = [
     pkg: 'session-telemetry',
     title: 'Session telemetry seam',
     mode: 'seam',
-    implementations: ['session-telemetry-otel'],
+    implementations: ['session-telemetry-otel', 'langfuse-ingest'],
     consumers: [],
     note: 'The seam captures, redacts, and hands session records to one backend; nothing else consumes the service — its output leaves the process.',
+  },
+  {
+    key: 'langfuse',
+    pkg: 'langfuse',
+    title: 'Langfuse observability client and analysis',
+    mode: 'core',
+    consumers: ['tool-langfuse', 'langfuse-ingest'],
+    note: 'Persistent client over a Langfuse server: reads traces, observations, scores, and metrics, analyzes them into insights and recommendations, and writes scores and ingestion events back.',
   },
   {
     key: 'storage',

@@ -153,6 +153,8 @@ const SENTENCE_MODEL_EXPERIENCE: Readonly<Record<string, SentenceContract>> = {
   'packages/typert/generator': { kind: 'none', reason: 'The build-time generator runs outside any agent runtime and touches no model request.' },
   'packages/jobs/jobs': { kind: 'indirect', reason: 'Producer and controller plugins own all model rendering over the job registry.' },
   'packages/jobs/jobs-local': { kind: 'indirect', reason: 'The registry backend delegates model rendering to producer plugins and dsh-tool-jobs.' },
+  'packages/langfuse/langfuse': { kind: 'indirect', reason: 'The service interface delegates all model rendering to dsh-tool-langfuse.' },
+  'packages/langfuse/langfuse-ingest': { kind: 'indirect', reason: 'The session-telemetry backend forwards captured records outward and registers no model surface.' },
   'packages/examples/acp-demo': { kind: 'indirect', reason: 'The app bundle delegates request composition to dsh-agent-spine-demo and dsh-acp.' },
   'packages/boot/app-boot': { kind: 'indirect', reason: 'Only the loaded plugin tree contributes model context.' },
   'packages/boot/cmdline': { kind: 'none', reason: 'Resolves the process command line before any session exists; configured rows own every model-visible consequence.' },
