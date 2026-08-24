@@ -23,23 +23,15 @@
     - id: tool-langfuse
       name: '@deepseek-ai/dsh-tool-langfuse'
 
-    # Record the harness' own sessions into Langfuse (dsh is a source too).
-    - id: langfuse-ingest
-      name: '@deepseek-ai/dsh-langfuse-ingest'
-      config:
-        tracePrefix: 'legalai-dsh'
-        tags: ['legal-agent-v4', 'production']
+    # NOTE: langfuse-ingest (record the harness' own sessions into Langfuse) is a
+    # sessionTelemetry BACKEND. The base profile already mounts the OTel backend,
+    # and the seam allows exactly one — enable langfuse-ingest only in a profile
+    # that removes/replaces `@deepseek-ai/dsh-session-telemetry-otel`.
+    # - id: langfuse-ingest
+    #   name: '@deepseek-ai/dsh-langfuse-ingest'
+    #   config: { tracePrefix: 'legalai-dsh', tags: ['legal-agent-v4', 'production'] }
 
     # LangGraph/LangChain flow intelligence: flow-design knowledge + tools to
     # reconstruct and design multi-node flows, monitored by the Langfuse rows above.
     - id: langgraph
       name: '@deepseek-ai/dsh-langgraph'
-
-    # mcp-cloud-hub: the shared remote MCP hub. Its tools register on ctx.tools as
-    # mcp__cloud-hub__<tool>, so flow `mcp` steps can call them directly.
-    - id: mcp-cloud-hub
-      name: '@deepseek-ai/dsh-mcp-client'
-      config:
-        serverName: cloud-hub
-        transport: sse
-        url: !!js '`https://mcp-cloud-hub-30591337479-lbrrkcqwvq-ew.a.run.app/sse?api_key=${process.env.MCP_CLOUD_HUB_API_KEY ?? ""}`'
