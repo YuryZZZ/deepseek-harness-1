@@ -1,0 +1,298 @@
+/**
+ * 29MVR 20-Node Mega Adjudication DAG FlowSpec.
+ * Models the complete multi-agent, multi-tool adjudication lifecycle for 29 Mount View Road.
+ * Executable via `runFlow` in `@deepseek-ai/dsh-langgraph`.
+ */
+
+import type { FlowSpec } from '../../packages/langgraph/langgraph/src/types.ts'
+
+export const flow29MvrAdjudication: FlowSpec = {
+  name: '29MVR-20Node-Mega-Adjudication-DAG',
+  description: '20-node multi-agent, multi-model, multi-tool adversarial adjudication pipeline for Red Square Group LTD v. Richard Ward (MATTER-29MVR-MASTER-001).',
+  nodes: [
+    {
+      kind: 'sequential',
+      name: 'Phase-1-Grounding-And-Jurisdiction',
+      steps: [
+        {
+          kind: 'step',
+          step: {
+            kind: 'tool',
+            name: 'Node-01-Contract-Ingestion',
+            tool: 'view_file',
+            args: { path: 'workspaces/29MVR/29MVR_Canonical_Contract_and_Entity_Ground_Truth_Master.md' },
+            model: 'claude-opus-5',
+          },
+        },
+        {
+          kind: 'step',
+          step: {
+            kind: 'tool',
+            name: 'Node-02-Entity-Privity-Anchor',
+            tool: 'tools_registry.get_party_register',
+            args: {
+              matter_id: 'MATTER-29MVR-MASTER-001',
+              contractor: 'Red Square Group LTD',
+              company_number: '11099300',
+              employer: 'Richard Ward',
+            },
+            model: 'claude-sonnet-5',
+          },
+        },
+        {
+          kind: 'step',
+          step: {
+            kind: 'search',
+            name: 'Node-03-Consumer-Residential-Occupier-Audit',
+            query: 'HGCRA 1996 s106 residential occupier Bryen & Langley v Boston [2005] JCT Minor Works Article 6',
+            model: 'claude-opus-5',
+          },
+        },
+      ],
+    },
+    {
+      kind: 'parallel',
+      name: 'Phase-2-Forensic-Quantum-And-Delay',
+      branches: [
+        {
+          kind: 'step',
+          step: {
+            kind: 'tool',
+            name: 'Node-04-Valuation-Chronology-Engine',
+            tool: 'sqlite3.query',
+            args: {
+              database: 'workspaces/29MVR/29MVR_Forensic_Evidence_Master.db',
+              query: 'SELECT app_number, due_date, ca_cert_deadline, default_notice_date, final_date_for_payment FROM payment_chronology WHERE app_number = 22',
+            },
+            model: 'gpt-5.6-sol',
+          },
+        },
+        {
+          kind: 'step',
+          step: {
+            kind: 'tool',
+            name: 'Node-05-Dual-Track-Quantum-Reconciliation',
+            tool: 'quantum_reconciler',
+            args: {
+              track_a_statutory_debt: 50349.00,
+              track_b_true_value: 87468.95,
+              settlement_offer: 47500.00,
+            },
+            model: 'deepseek-v4-pro',
+          },
+        },
+        {
+          kind: 'step',
+          step: {
+            kind: 'tool',
+            name: 'Node-06-Change-Orders-CO26-Forensics',
+            tool: 'sqlite3.query',
+            args: {
+              database: 'workspaces/29MVR/29MVR_Forensic_Evidence_Master.db',
+              query: "SELECT count(*) as total_cos, sum(contractor_claimed) as total_claimed FROM change_orders WHERE status = 'DISPUTED'",
+            },
+            model: 'claude-sonnet-5',
+          },
+        },
+        {
+          kind: 'step',
+          step: {
+            kind: 'tool',
+            name: 'Node-07-Delay-EOT-LD-Preclusion',
+            tool: 'eot_certificate_parser',
+            args: {
+              certificate_date: '2025-02-25',
+              granted_weeks: 16,
+              revised_completion: '2025-04-12',
+              prevention_principle_engaged: true,
+            },
+            model: 'claude-opus-5',
+          },
+        },
+        {
+          kind: 'step',
+          step: {
+            kind: 'tool',
+            name: 'Node-08-CA-Abandonment-Article-3-Breach',
+            tool: 'croudace_precedent_checker',
+            args: {
+              ca_name: 'Alexander Thompson',
+              firm: 'Building Doctors',
+              breach_type: 'FEE_STARVATION_FAILURE_TO_REPLACE',
+            },
+            model: 'claude-opus-5',
+          },
+        },
+      ],
+    },
+    {
+      kind: 'parallel',
+      name: 'Phase-3-Cloud-Evidence-Vault',
+      branches: [
+        {
+          kind: 'step',
+          step: {
+            kind: 'mcp',
+            server: 'cloud-hub',
+            name: 'Node-09-BigQuery-Corpus-Semantic-Search',
+            tool: 'bigquery_execute_sql',
+            args: {
+              query: "SELECT segment_id, title, score FROM `legalai-480809.construction_ai.ocr_document_segments` WHERE matter_id = '29MVR' ORDER BY score DESC LIMIT 10",
+            },
+            model: 'gemini-3.7-flash',
+          },
+        },
+        {
+          kind: 'step',
+          step: {
+            kind: 'mcp',
+            server: 'cloud-hub',
+            name: 'Node-10-Zoho-Mail-WorkDrive-Vault',
+            tool: 'zoho_vault_verify',
+            args: {
+              folder_id: '330144000003731001',
+              workdrive_id: 'unosofolder29mvrmillviewrd001',
+            },
+            model: 'claude-sonnet-5',
+          },
+        },
+      ],
+    },
+    {
+      kind: 'parallel',
+      name: 'Phase-4-Multi-Model-Adversarial-Consensus',
+      branches: [
+        {
+          kind: 'step',
+          step: {
+            kind: 'llm',
+            name: 'Node-11-Multi-Model-Consensus-Evaluation',
+            prompt: 'Evaluate legal demand letter and referral notice for Red Square Group LTD v Richard Ward. Assess: (1) S&T v Grove statutory debt enforceability, (2) Article 3 certifier breach, (3) 16-week EOT bar against liquidated damages.',
+            model: 'claude-opus-5',
+          },
+        },
+        {
+          kind: 'step',
+          step: {
+            kind: 'llm',
+            name: 'Node-12-Adversarial-Respondent-Counsel-Attack',
+            prompt: 'Act as aggressive Respondent Counsel attacking 29MVR claim. Challenge CRA 2015 consumer terms, Domsalla set-off, defect snagging counterclaims, and quantum inflation. Formulate rebuttals.',
+            model: 'deepseek-v4-pro',
+          },
+        },
+        {
+          kind: 'step',
+          step: {
+            kind: 'llm',
+            name: 'Node-13-Tribunal-Adjudicator-Jurisdiction-Audit',
+            prompt: 'Act as RICS Nominated Adjudicator. Audit Scheme Part I paragraph 1(3) single dispute compliance, notice service timing, and jurisdictional natural justice limits for 29MVR.',
+            model: 'claude-sonnet-5',
+          },
+        },
+        {
+          kind: 'step',
+          step: {
+            kind: 'llm',
+            name: 'Node-14-High-Court-TCC-Summary-Judgment-Simulation',
+            prompt: 'Act as Technology and Construction Court (TCC) High Court Judge evaluating CPR Part 24 summary judgment enforcement of 29MVR adjudication award under Macob and Bouygues.',
+            model: 'claude-opus-5',
+          },
+        },
+      ],
+    },
+    {
+      kind: 'parallel',
+      name: 'Phase-5-Settlement-And-Asset-Recovery',
+      branches: [
+        {
+          kind: 'step',
+          step: {
+            kind: 'tool',
+            name: 'Node-15-Calderbank-Negotiation-Optimization',
+            tool: 'calderbank_optimizer',
+            args: {
+              cash_offer: 47500.00,
+              validity_business_days: 5,
+              statutory_exposure: 50349.00,
+              true_value_exposure: 87468.95,
+            },
+            model: 'gpt-5.6-sol',
+          },
+        },
+        {
+          kind: 'step',
+          step: {
+            kind: 'tool',
+            name: 'Node-16-Charging-Order-Asset-Recovery',
+            tool: 'land_registry_tool',
+            args: {
+              property: '29 Mount View Road',
+              title_number: 'MX290184',
+              estimated_equity: 800000.00,
+              form_rx1_ready: true,
+            },
+            model: 'claude-sonnet-5',
+          },
+        },
+      ],
+    },
+    {
+      kind: 'sequential',
+      name: 'Phase-6-Dispatch-Chaining-And-Signoff',
+      steps: [
+        {
+          kind: 'step',
+          step: {
+            kind: 'tool',
+            name: 'Node-17-Legal-Dispatch-Pack-Compilation',
+            tool: 'view_file',
+            args: { path: 'workspaces/29MVR/29MVR_Master_Final_Dispatch_and_Cloud_Review_Pack.md' },
+            model: 'claude-opus-5',
+          },
+        },
+        {
+          kind: 'step',
+          step: {
+            kind: 'tool',
+            name: 'Node-18-Cryptographic-Evidence-Ledger',
+            tool: 'sha256_hasher',
+            args: {
+              matter_id: 'MATTER-29MVR-MASTER-001',
+              chain_algorithm: 'SHA256',
+            },
+            model: 'deepseek-v4-pro',
+          },
+        },
+        {
+          kind: 'step',
+          step: {
+            kind: 'tool',
+            name: 'Node-19-SICLI-Matter-Relational-Sync',
+            tool: 'postgresql.flow_store',
+            args: {
+              workspace_id: 'ws-project-29mvr',
+              tenant_id: 'TEN-29MVR-LEGALAI',
+              status: 'APPROVED_BULLETPROOF',
+            },
+            model: 'claude-sonnet-5',
+          },
+        },
+        {
+          kind: 'step',
+          step: {
+            kind: 'tool',
+            name: 'Node-20-Final-Adjudication-Signoff-Gate',
+            tool: 'tools_registry.write_agent_note',
+            args: {
+              matter_id: 'MATTER-29MVR-MASTER-001',
+              workspace_id: 'ws-project-29mvr',
+              title: '20-Node Mega Adjudication DAG Sign-off',
+              verdict: 'APPROVED_BULLETPROOF',
+            },
+            model: 'claude-opus-5',
+          },
+        },
+      ],
+    },
+  ],
+}
