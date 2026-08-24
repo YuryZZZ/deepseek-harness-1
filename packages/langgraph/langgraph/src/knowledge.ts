@@ -86,6 +86,26 @@ Best practice: keep instructions declarative and stable; vary the dynamic parts 
 - Loop counters and lineage: include iteration index and source in prompts inside loops.
 Best practice: system prompt = stable contract; task prompt = dynamic; keep the dynamic prompt minimal and grounded.`,
   },
+  {
+    id: 'mcp',
+    title: 'MCP and mcp-cloud-hub integration',
+    content: `MCP (Model Context Protocol) exposes external tools through servers.
+- The harness bridges MCP servers with dsh-mcp-client, which registers their tools on ctx.tools as mcp__<serverName>__<toolName>.
+- mcp-cloud-hub is the shared remote MCP hub; connect it with one dsh-mcp-client entry (serverName: cloud-hub, transport: streamable-http, url: the hub URL).
+- In a flow, an mcp step references a server + tool; it resolves to the registered mcp__<server>__<tool> at runtime.
+- Discover the available MCP tools by listing ctx.tools names prefixed mcp__ before designing a flow.
+Best practice: use MCP for external, shared capabilities (search, memory, domain APIs) and ordinary tools for first-party work.`,
+  },
+  {
+    id: 'dynamic-agents',
+    title: 'Dynamic agent creation (never hardcoded)',
+    content: `Subagents must be created from the task, flow, and workspace at runtime — never hardcoded.
+- parallel-map: fan one body out over a state list (e.g. state.plan or state.items); the number of subagents equals the list length, so it adapts to the task.
+- Planner pattern: an llm node writes a JSON list to state, then a parallel-map runs one subagent per item.
+- Model selection: each step can carry a model id (e.g. a LiteLLM route); the runtime resolves it against the available models.
+- Workspace context: read the workspace's available tools, MCP servers, and models, then assemble the flow from them.
+Best practice: derive arity from data, not literals; pin models per step only when the task needs it.`,
+  },
 ]
 
 /** Resolve one topic by id, or undefined. */

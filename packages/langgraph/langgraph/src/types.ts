@@ -18,6 +18,8 @@ export interface FlowStep {
   query?: string
   /** For `mcp`: the MCP server name. */
   server?: string
+  /** Optional model id (e.g. a LiteLLM route); unset uses the runtime default. */
+  model?: string
 }
 
 /** A flow node: a leaf step or a control-flow combinator. */
@@ -25,6 +27,7 @@ export type FlowNode =
   | { kind: 'step'; step: FlowStep }
   | { kind: 'sequential'; name: string; steps: FlowNode[] }
   | { kind: 'parallel'; name: string; branches: FlowNode[] }
+  | { kind: 'parallel-map'; name: string; over: string; body: FlowNode }
   | { kind: 'loop'; name: string; times: number; body: FlowNode }
   | { kind: 'conditional'; name: string; when: string; then: FlowNode; else?: FlowNode }
 

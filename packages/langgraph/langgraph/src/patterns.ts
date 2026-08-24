@@ -50,12 +50,8 @@ export const FLOW_PATTERNS: FlowPattern[] = [
       name: 'plan-execute',
       description: `Plan-and-execute flow for: ${task}. Workspace: ${workspace}`,
       nodes: [
-        llm('planner', `Break this task into 3-5 independent sub-tasks and output them as a list:\n${task}`),
-        parallel('executors', [
-          subagent('executor-a', `Execute sub-task A of: ${task}. Return a concise result.`),
-          subagent('executor-b', `Execute sub-task B of: ${task}. Return a concise result.`),
-          subagent('executor-c', `Execute sub-task C of: ${task}. Return a concise result.`),
-        ]),
+        llm('planner', `Break this task into independent sub-tasks and output them as a JSON list under the state key "plan":\n${task}`),
+        { kind: 'parallel-map', name: 'executors', over: 'plan', body: subagent('executor', `Execute the assigned sub-task for: ${task}. Return a concise result.`) },
         llm('synthesizer', `Synthesize the executor results into one final answer for:\n${task}`),
       ],
     }),
@@ -69,11 +65,7 @@ export const FLOW_PATTERNS: FlowPattern[] = [
       name: 'map-reduce',
       description: `Map-reduce flow for: ${task}. Workspace: ${workspace}`,
       nodes: [
-        parallel('map', [
-          subagent('map-1', `Analyze item 1 for: ${task}`),
-          subagent('map-2', `Analyze item 2 for: ${task}`),
-          subagent('map-3', `Analyze item 3 for: ${task}`),
-        ]),
+        { kind: 'parallel-map', name: 'map', over: 'items', body: subagent('analyze-item', `Analyze the assigned item for: ${task}`) },
         llm('reduce', `Aggregate the per-item results into one final answer for:\n${task}`),
       ],
     }),

@@ -63,6 +63,8 @@ function renderNode(node: FlowNode, depth: number): string[] {
       return [`${pad}${node.name} (sequential):`, ...node.steps.flatMap(s => renderNode(s, depth + 1))]
     case 'parallel':
       return [`${pad}${node.name} (parallel):`, ...node.branches.flatMap(b => renderNode(b, depth + 1))]
+    case 'parallel-map':
+      return [`${pad}${node.name} (parallel-map over state.${node.over}):`, ...renderNode(node.body, depth + 1)]
     case 'loop':
       return [`${pad}${node.name} (loop ×${node.times}):`, ...renderNode(node.body, depth + 1)]
     case 'conditional': {
