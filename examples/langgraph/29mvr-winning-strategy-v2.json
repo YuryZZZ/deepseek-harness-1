@@ -1,0 +1,68 @@
+{
+  "name": "29mvr-winning-strategy-v2",
+  "description": "Multi-LLM winning-strategy flow for matter 29MVR: ingest → 3 parallel strategies (GPT/Claude/Gemini) → 2 adversarial red-teams → 3 validations → 3-member peer panel → consensus/audit/risk → formal dispatch. Faithful to services/deep-agent-service/configs/29mvr_flow_registry.json flow-29mvr-multi-llm-winning-strategy-v2-20node.",
+  "nodes": [
+    {
+      "kind": "sequential",
+      "name": "ingest",
+      "steps": [
+        { "kind": "step", "step": { "kind": "llm", "name": "s1_evidence", "prompt": "Gather all evidence from the 29MVR case materials." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s1_extract", "prompt": "Extract the key legal facts from the gathered evidence {{s1_evidence}}." } }
+      ]
+    },
+    {
+      "kind": "parallel",
+      "name": "strategies",
+      "branches": [
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_strategy_gpt", "model": "openai/gpt-5.6-sol", "prompt": "Generate the primary adjudication strategy from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_strategy_claude", "model": "anthropic/claude-sonnet-5", "prompt": "Generate an independent adjudication strategy from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_strategy_gemini", "model": "vertex_ai/gemini-3.7-flash", "prompt": "Generate an independent adjudication strategy from {{s1_extract}}." } }
+      ]
+    },
+    {
+      "kind": "parallel",
+      "name": "redteam",
+      "branches": [
+        { "kind": "step", "step": { "kind": "llm", "name": "s3_redteam_deepseek", "model": "deepseek/deepseek-v4-pro", "prompt": "Red-team adversarial review of the strategies in {{strategies}}: find the strongest counter-arguments." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s3_redteam_kimi", "model": "moonshot/kimi-k3", "prompt": "Red-team cost and risk analysis of the strategies in {{strategies}}." } }
+      ]
+    },
+    {
+      "kind": "parallel",
+      "name": "validation",
+      "branches": [
+        { "kind": "step", "step": { "kind": "llm", "name": "s4_financial", "model": "openai/gpt-5.6-sol", "prompt": "Financial validation of the red-teamed strategy in {{redteam}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s4_compliance", "model": "anthropic/claude-opus-5", "prompt": "Regulatory and scheme compliance check of the strategy in {{redteam}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s4_creative", "model": "anthropic/claude-fable-5", "prompt": "Creative settlement options based on {{redteam}}." } }
+      ]
+    },
+    {
+      "kind": "parallel",
+      "name": "peer-review",
+      "branches": [
+        { "kind": "step", "step": { "kind": "llm", "name": "s5_review_1", "prompt": "Peer-review the validated strategy in {{validation}} (panel member 1)." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s5_review_2", "prompt": "Peer-review the validated strategy in {{validation}} (panel member 2)." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s5_review_3", "prompt": "Peer-review the validated strategy in {{validation}} (panel member 3)." } }
+      ]
+    },
+    {
+      "kind": "sequential",
+      "name": "consensus",
+      "steps": [
+        { "kind": "step", "step": { "kind": "llm", "name": "s6_consensus", "prompt": "Cross-validate and build consensus over the peer reviews in {{peer-review}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s6_synthesis", "prompt": "Synthesize the final strategy document from the consensus in {{s6_consensus}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s6_audit", "prompt": "Run a consistency audit of the synthesis in {{s6_synthesis}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s6_risk", "prompt": "Final risk triage and human-in-the-loop preparation for {{s6_audit}}." } }
+      ]
+    },
+    {
+      "kind": "sequential",
+      "name": "dispatch",
+      "steps": [
+        { "kind": "step", "step": { "kind": "llm", "name": "s7_notice", "prompt": "Generate the formal legal notices from the consensus in {{consensus}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s7_review", "prompt": "Review the notices for compliance and completeness." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s7_package", "prompt": "Compile the final delivery package." } }
+      ]
+    }
+  ]
+}

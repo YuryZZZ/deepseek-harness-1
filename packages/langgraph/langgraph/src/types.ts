@@ -20,6 +20,8 @@ export interface FlowStep {
   server?: string
   /** Optional model id (e.g. a LiteLLM route); unset uses the runtime default. */
   model?: string
+  /** Optional provider id (e.g. a subagent or LLM provider); unset uses default. */
+  provider?: string
 }
 
 /** A flow node: a leaf step or a control-flow combinator. */

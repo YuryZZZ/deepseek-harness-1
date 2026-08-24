@@ -69,18 +69,86 @@ describe('runFlow', () => {
     expect(interpolate('missing {{nope}}', state)).toBe('missing ')
   })
 
-  it('runs while and retry constructs', async () => {
-    const { ctx, calls } = mockCtx()
+  it('runs direct single-turn LLM generation when the llm service is available', async () => {
+    const ctx = {
+      tools: { execute: async () => ({ ok: true }) },
+      web: { search: async () => ({ sources: [] }) },
+      get: (name: string) => name === 'llm'
+        ? {
+          listProviders: () => [{ id: 'litellm', name: 'LiteLLM Gateway' }],
+          listModels: async () => [{ id: 'deepseek-v4-pro', name: 'DeepSeek V4 Pro', provider: 'litellm' }],
+          stream: async function* () {
+            yield { type: 'text-delta', index: 0, text: 'Summary of ' }
+            yield { type: 'text-delta', index: 0, text: 'matter' }
+          },
+        }
+        : undefined,
+    } as unknown as Context
+
     const spec: FlowSpec = {
-      name: 'controls',
+      name: 'llm-flow',
       description: '',
       nodes: [
-        { kind: 'while', name: 'spin', while: 'go', body: { kind: 'step', step: { kind: 'tool', name: 'tick', tool: 'tick' } } },
-        { kind: 'retry', name: 'resilient', attempts: 2, body: { kind: 'step', step: { kind: 'tool', name: 'ok', tool: 'ok' } } },
+        { kind: 'step', step: { kind: 'llm', name: 'summary', prompt: 'Summarize {{matter}}' } },
       ],
     }
     const result = await runFlow(ctx, {} as never, new AbortController().signal, spec)
-    expect(calls).toContain('ok')
-    expect(result).toHaveProperty('ok')
+    expect(result).toEqual({ summary: 'Summary of matter' })
+  })
+
+  it('falls back to a subagent for an llm step when the llm service is absent', async () => {
+    let capturedLabel = ''
+    const ctx = {
+      tools: { execute: async () => ({ ok: true }) },
+      web: { search: async () => ({ sources: [] }) },
+      get: () => undefined,
+      subagents: {
+        list: () => ['spawn'],
+        start: async (_provider: string, req: { label?: string }) => {
+          capturedLabel = req.label ?? ''
+          return { result: Promise.resolve({ brief: 'done' }) }
+        },
+      },
+    } as unknown as Context
+
+    const spec: FlowSpec = {
+      name: 'llm-fallback',
+      description: '',
+      nodes: [
+        { kind: 'step', step: { kind: 'llm', name: 'brief', prompt: 'Write a brief' } },
+      ],
+    }
+    const result = await runFlow(ctx, {} as never, new AbortController().signal, spec)
+    expect(capturedLabel).toBe('brief')
+    expect(result).toEqual({ brief: { brief: 'done' } })
+  })
+
+  it('runs subagent step with resolved provider and label', async () => {
+    let capturedProvider = ''
+    let capturedLabel = ''
+    const ctx = {
+      tools: { execute: async () => ({ ok: true }) },
+      web: { search: async () => ({ sources: [] }) },
+      subagents: {
+        list: () => ['spawn', 'fork'],
+        start: async (provider: string, req: { label?: string }) => {
+          capturedProvider = provider
+          capturedLabel = req.label ?? ''
+          return { result: Promise.resolve({ analysis: 'done' }) }
+        },
+      },
+    } as unknown as Context
+
+    const spec: FlowSpec = {
+      name: 'subagent-flow',
+      description: '',
+      nodes: [
+        { kind: 'step', step: { kind: 'subagent', name: 'investigate', prompt: 'Investigate facts' } },
+      ],
+    }
+    const result = await runFlow(ctx, {} as never, new AbortController().signal, spec)
+    expect(capturedProvider).toBe('spawn')
+    expect(capturedLabel).toBe('investigate')
+    expect(result).toEqual({ investigate: { analysis: 'done' } })
   })
 })

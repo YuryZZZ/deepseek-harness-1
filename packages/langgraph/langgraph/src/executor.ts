@@ -74,7 +74,38 @@ async function runNode(
         content: [{ type: 'text', text: prompt }],
         source: { kind: 'user' },
       })
-      const run = await ctx.subagents.start(step.name, {
+
+      const llm = step.kind === 'llm' ? ctx.get('llm') : undefined
+      if (llm && typeof llm.listProviders === 'function') {
+        const providers = llm.listProviders()
+        if (providers.length > 0) {
+          const provider = step.provider ?? providers[0]?.id ?? ''
+          let model = step.model ?? (agent as unknown as { callConfig?: { model?: string } })?.callConfig?.model
+          if (!model && provider.length > 0) {
+            const models = await llm.listModels(provider)
+            model = models[0]?.id ?? 'default'
+          }
+          const chunks = llm.stream({
+            provider,
+            model: model ?? 'default',
+            messages: [message],
+            signal,
+          })
+          let text = ''
+          for await (const chunk of chunks) {
+            if (chunk.type === 'text-delta') {
+              text += chunk.text
+            }
+          }
+          return { [step.name]: text }
+        }
+      }
+
+      const providerName = step.provider
+        ?? (ctx.subagents && typeof ctx.subagents.list === 'function' ? ctx.subagents.list()[0] : undefined)
+        ?? 'spawn'
+      const run = await ctx.subagents.start(providerName, {
+        label: step.name,
         prompt: message.content,
         parent: agent,
         signal,

@@ -1,0 +1,110 @@
+{
+  "name": "29mvr-full-spectrum-adjudication",
+  "description": "Comprehensive 29MVR adjudication flow using every model, every tool, every MCP server, web search, the LegalAI agents (LAKF LegalAI + Adjudication Agent 1), and cloud storage/databases (BigQuery, Zoho WorkDrive, SICLI/PostgreSQL). Multi-source retrieval → 12-model strategy fan-out → legal-AI delegation → adversarial red-team → validation → peer panel → consensus → dispatch → Agent-1 verdict.",
+  "nodes": [
+    {
+      "kind": "parallel",
+      "name": "retrieve",
+      "branches": [
+        { "kind": "step", "step": { "kind": "search", "name": "web-search", "query": "Red Square Group LTD adjudication construction JCT MWD 2016 residential occupier" } },
+        { "kind": "step", "step": { "kind": "mcp", "name": "bigquery-rag", "server": "cloud-hub", "tool": "execute_sql", "args": { "query": "SELECT * FROM legalai.matters WHERE matter_id = '29MVR'" } } },
+        { "kind": "step", "step": { "kind": "mcp", "name": "zoho-vault", "server": "cloud-hub", "tool": "zoho_vault_verify", "args": { "workspace": "29MVR" } } },
+        { "kind": "step", "step": { "kind": "mcp", "name": "workdrive-vault", "server": "cloud-hub", "tool": "workdrive_mcp", "args": { "matter": "29MVR" } } },
+        { "kind": "step", "step": { "kind": "tool", "name": "sicli-db", "tool": "postgresql.flow_store", "args": { "matter": "29MVR", "op": "read" } } },
+        { "kind": "step", "step": { "kind": "mcp", "name": "open-design-doc", "server": "open-design", "tool": "od_render", "args": { "matter": "29MVR" } } }
+      ]
+    },
+    {
+      "kind": "sequential",
+      "name": "ingest",
+      "steps": [
+        { "kind": "step", "step": { "kind": "llm", "name": "s1_evidence", "model": "deepseek/deepseek-v4-flash", "prompt": "Consolidate all retrieved sources {{retrieve}} into an evidence set." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s1_extract", "model": "deepseek/deepseek-v4-pro", "prompt": "Extract the key legal facts from the evidence {{s1_evidence}}." } }
+      ]
+    },
+    {
+      "kind": "parallel",
+      "name": "strategies",
+      "branches": [
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_deepseek_pro", "model": "deepseek/deepseek-v4-pro", "prompt": "Strategy A from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_deepseek_flash", "model": "deepseek/deepseek-v4-flash", "prompt": "Strategy B from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_claude_opus", "model": "anthropic/claude-opus-5", "prompt": "Strategy C from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_claude_sonnet", "model": "anthropic/claude-sonnet-5", "prompt": "Strategy D from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_claude_fable", "model": "anthropic/claude-fable-5", "prompt": "Strategy E from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_gemini_flash", "model": "vertex_ai/gemini-3.7-flash", "prompt": "Strategy F from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_gemini_pro", "model": "vertex_ai/gemini-3.1-pro", "prompt": "Strategy G from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_gpt_sol", "model": "openai/gpt-5.6-sol", "prompt": "Strategy H from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_glm_53", "model": "zai/glm-5.3", "prompt": "Strategy I from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_glm_52", "model": "zai/glm-5.2", "prompt": "Strategy J from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_kimi_k3", "model": "moonshot/kimi-k3", "prompt": "Strategy K from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_kimi_hs", "model": "moonshot/kimi-k2.7-highspeed", "prompt": "Strategy L from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_sonar_pro", "model": "perplexity/sonar-pro", "prompt": "Strategy M (research-grounded) from {{s1_extract}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s2_sonar", "model": "perplexity/sonar", "prompt": "Strategy N from {{s1_extract}}." } }
+      ]
+    },
+    {
+      "kind": "parallel",
+      "name": "legalai-delegation",
+      "branches": [
+        { "kind": "step", "step": { "kind": "subagent", "name": "legalai-agent", "prompt": "Delegate strategy evaluation to the LegalAI agent on the strategies in {{strategies}}." } },
+        { "kind": "step", "step": { "kind": "subagent", "name": "lakf-legalai", "prompt": "Delegate strategy evaluation to LAKF LegalAI on the strategies in {{strategies}}." } },
+        { "kind": "step", "step": { "kind": "tool", "name": "agent-1", "tool": "call_adjudication_agent", "args": { "strategies": "{{strategies}}" } } }
+      ]
+    },
+    {
+      "kind": "parallel",
+      "name": "redteam",
+      "branches": [
+        { "kind": "step", "step": { "kind": "llm", "name": "s3_redteam_deepseek", "model": "deepseek/deepseek-v4-pro", "prompt": "Red-team adversarial review of {{legalai-delegation}} and {{strategies}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s3_redteam_kimi", "model": "moonshot/kimi-k3", "prompt": "Red-team cost and risk analysis of {{legalai-delegation}}." } }
+      ]
+    },
+    {
+      "kind": "parallel",
+      "name": "validation",
+      "branches": [
+        { "kind": "step", "step": { "kind": "llm", "name": "s4_financial", "model": "openai/gpt-5.6-sol", "prompt": "Financial validation of {{redteam}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s4_compliance", "model": "anthropic/claude-opus-5", "prompt": "Regulatory and scheme compliance check of {{redteam}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s4_creative", "model": "anthropic/claude-fable-5", "prompt": "Creative settlement options based on {{redteam}}." } }
+      ]
+    },
+    {
+      "kind": "parallel",
+      "name": "peer-review",
+      "branches": [
+        { "kind": "step", "step": { "kind": "llm", "name": "s5_review_1", "prompt": "Peer-review the validated strategy in {{validation}} (panel member 1)." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s5_review_2", "prompt": "Peer-review the validated strategy in {{validation}} (panel member 2)." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s5_review_3", "prompt": "Peer-review the validated strategy in {{validation}} (panel member 3)." } }
+      ]
+    },
+    {
+      "kind": "sequential",
+      "name": "consensus",
+      "steps": [
+        { "kind": "step", "step": { "kind": "llm", "name": "s6_consensus", "prompt": "Cross-validate and build consensus over {{peer-review}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s6_synthesis", "prompt": "Synthesize the final strategy document from {{s6_consensus}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s6_audit", "prompt": "Run a consistency audit of {{s6_synthesis}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s6_risk", "prompt": "Final risk triage and human-in-the-loop preparation for {{s6_audit}}." } }
+      ]
+    },
+    {
+      "kind": "sequential",
+      "name": "dispatch",
+      "steps": [
+        { "kind": "step", "step": { "kind": "llm", "name": "s7_notice", "model": "anthropic/claude-opus-5", "prompt": "Generate the formal legal notices from {{consensus}}." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s7_review", "prompt": "Review the notices for compliance and completeness." } },
+        { "kind": "step", "step": { "kind": "llm", "name": "s7_package", "prompt": "Compile the final delivery package." } },
+        { "kind": "step", "step": { "kind": "tool", "name": "crypto-ledger", "tool": "sha256_hasher", "args": { "package": "{{s7_package}}" } } },
+        { "kind": "step", "step": { "kind": "tool", "name": "sicli-store", "tool": "postgresql.flow_store", "args": { "matter": "29MVR", "op": "write", "package": "{{s7_package}}" } } },
+        { "kind": "step", "step": { "kind": "mcp", "name": "workdrive-store", "server": "cloud-hub", "tool": "workdrive_mcp", "args": { "matter": "29MVR", "op": "write", "package": "{{s7_package}}" } } }
+      ]
+    },
+    {
+      "kind": "conditional",
+      "name": "verdict",
+      "when": "consensus.passed",
+      "then": { "kind": "step", "step": { "kind": "tool", "name": "adjudication-verdict", "tool": "call_adjudication_agent", "args": { "package": "{{dispatch}}" } } },
+      "else": { "kind": "step", "step": { "kind": "llm", "name": "revision", "prompt": "Revise weak findings in {{consensus}} before the verdict." } }
+    }
+  ]
+}
