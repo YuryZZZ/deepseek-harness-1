@@ -20,7 +20,7 @@ export { designFlow, FLOW_PATTERNS } from './patterns.ts'
 export type { FlowPattern } from './patterns.ts'
 export { KNOWLEDGE_TOPICS, knowledgeTopic, listKnowledgeTopics } from './knowledge.ts'
 export type { KnowledgeTopic } from './knowledge.ts'
-export { runFlow } from './executor.ts'
+export { runFlow, interpolate } from './executor.ts'
 export type { FlowNode, FlowSpec, FlowStep } from './types.ts'
 
 export const name = 'langgraph'

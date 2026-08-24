@@ -67,6 +67,17 @@ function renderNode(node: FlowNode, depth: number): string[] {
       return [`${pad}${node.name} (parallel-map over state.${node.over}):`, ...renderNode(node.body, depth + 1)]
     case 'loop':
       return [`${pad}${node.name} (loop ×${node.times}):`, ...renderNode(node.body, depth + 1)]
+    case 'while':
+      return [`${pad}${node.name} (while ${node.while}):`, ...renderNode(node.body, depth + 1)]
+    case 'retry':
+      return [`${pad}${node.name} (retry ×${node.attempts}):`, ...renderNode(node.body, depth + 1)]
+    case 'switch': {
+      const out = [`${pad}${node.name} (switch on ${node.on}):`]
+      for (const [key, branch] of Object.entries(node.cases)) {
+        out.push(`${pad}  case "${key}":`, ...renderNode(branch, depth + 2))
+      }
+      return out
+    }
     case 'conditional': {
       const out = [`${pad}${node.name} (if ${node.when}):`, ...renderNode(node.then, depth + 1)]
       if (node.else !== undefined) out.push(`${pad}${node.name} (else):`, ...renderNode(node.else, depth + 1))

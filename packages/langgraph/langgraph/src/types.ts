@@ -29,6 +29,9 @@ export type FlowNode =
   | { kind: 'parallel'; name: string; branches: FlowNode[] }
   | { kind: 'parallel-map'; name: string; over: string; body: FlowNode }
   | { kind: 'loop'; name: string; times: number; body: FlowNode }
+  | { kind: 'while'; name: string; while: string; body: FlowNode }
+  | { kind: 'retry'; name: string; attempts: number; body: FlowNode }
+  | { kind: 'switch'; name: string; on: string; cases: Record<string, FlowNode>; default?: FlowNode }
   | { kind: 'conditional'; name: string; when: string; then: FlowNode; else?: FlowNode }
 
 /** A declarative multi-node flow specification. */
