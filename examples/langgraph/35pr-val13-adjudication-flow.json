@@ -1,0 +1,52 @@
+{
+  "name": "35pr-val13-adjudication-flow",
+  "description": "35 Purves Road Valuation 13 Adjudication & Statutory Debt Enforcement Flow",
+  "nodes": [
+    {
+      "kind": "sequential",
+      "name": "val13-adjudication-pipeline",
+      "steps": [
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "p01-val13-debt-validation",
+            "prompt": "Audit Valuation 13 under RIBA DBC 2018; verify default payment notice and absence of timely Pay Less Notice.",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "p02-retention-release-audit",
+            "prompt": "Audit retention release clause and establish client breach upon practical completion / repossession.",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "p03-riba-notice-of-adjudication",
+            "prompt": "Draft formal Notice of Adjudication under RIBA DBC 2018 dispute resolution rules.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "p04-tcc-enforcement-pack",
+            "prompt": "Prepare High Court CPR Part 8 / Part 24 summary enforcement application for immediate recovery.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        }
+      ]
+    }
+  ]
+}

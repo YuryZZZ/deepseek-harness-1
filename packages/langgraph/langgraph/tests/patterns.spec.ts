@@ -45,3 +45,23 @@ describe('reconstructFlow', () => {
     expect(text).toContain('generate [llm]')
   })
 })
+
+describe('Legal Flow Specs', () => {
+  it('validates canonical legal FlowSpec files', async () => {
+    const fs = await import('node:fs/promises')
+    const path = await import('node:path')
+    const examplesDir = path.resolve(__dirname, '../../../../examples/langgraph')
+    const files = await fs.readdir(examplesDir)
+    const jsonFiles = files.filter(f => f.endsWith('.json'))
+
+    expect(jsonFiles.length).toBeGreaterThanOrEqual(4)
+    for (const file of jsonFiles) {
+      const raw = await fs.readFile(path.join(examplesDir, file), 'utf-8')
+      const spec = JSON.parse(raw) as { name: string; description: string; nodes: unknown[] }
+      expect(spec.name).toBeDefined()
+      expect(spec.description).toBeDefined()
+      expect(Array.isArray(spec.nodes)).toBe(true)
+      expect(spec.nodes.length).toBeGreaterThan(0)
+    }
+  })
+})

@@ -1,0 +1,112 @@
+{
+  "name": "30wr-10step-adjudication-strategy",
+  "description": "30 Wetherell Road 10-Step Adjudication & Company Identity Analysis Pipeline",
+  "nodes": [
+    {
+      "kind": "sequential",
+      "name": "ten-step-strategy",
+      "steps": [
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "s01-company-identity-privity",
+            "prompt": "Analyze Companies House filing 11099300 for Red Square Group Ltd and confirm correct contracting entity vs legacy names.",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "s02-statutory-debt-validation",
+            "prompt": "Validate Payment Certificate 23 under s.110/111 HGCRA 1996 for £4,297.13 net (£5,156.56 gross).",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "s03-delay-event-matrix",
+            "prompt": "Extract all employer-caused delay events between Oct 2024 and Jan 2025 and map against contract completion date.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "s04-variations-pricing-ledger",
+            "prompt": "Construct 37-variation itemized schedule and apply agreed contractual rates and daywork rates.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "s05-lba-statutory-demand",
+            "prompt": "Draft 7-day Letter Before Action (LBA) with statutory late payment interest and compensation costs.",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "s06-riba-anb-nomination",
+            "prompt": "Prepare RIBA Notice of Adjudication and request for adjudicator nomination to RIBA ANB.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "s07-referral-notice-drafting",
+            "prompt": "Draft formal Referral Notice and append documentary evidence exhibits 01-18.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "s08-jurisdiction-defense-prep",
+            "prompt": "Pre-empt jurisdictional challenges (e.g. residential occupier exemption under s.106 HGCRA 1996 per Bryen & Langley).",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "s09-tcc-enforcement-readiness",
+            "prompt": "Prepare CPR Part 8 claim form and witness statement template for High Court summary enforcement.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "s10-settlement-strategy",
+            "prompt": "Formulate without-prejudice negotiation bounds, timing of Calderbank offer, and ADR options.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        }
+      ]
+    }
+  ]
+}

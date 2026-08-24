@@ -1,0 +1,236 @@
+{
+  "name": "29mvr-20node-mega-adjudication",
+  "description": "29 Malvern Road (Ward) 20-Node JCT Minor Works 2016 Adjudication and High Court Enforcement Pipeline",
+  "nodes": [
+    {
+      "kind": "sequential",
+      "name": "stage-1-jct-contract-and-privity",
+      "steps": [
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m01-contract-grounding",
+            "prompt": "Ground contract under JCT Minor Works 2016 between Red Square Group Ltd (11099300) and Christopher Ward.",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m02-article-3-ca-breach",
+            "prompt": "Forensic audit of CA Article 3 impartiality breach: structural engineer collusion and refusal to certify interim valuations.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m03-payment-clause-analysis",
+            "prompt": "Audit JCT payment provisions: 4.3.1 (due date), 4.3.2 (CA certificate), 4.5.1 (application), 4.5.2.1 (payment notice default), 4.6.2 (debt obligation).",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m04-absence-of-payless",
+            "prompt": "Establish complete absence of valid Pay Less Notice under s.111 HGCRA 1996 and JCT cl 4.5.4.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "sequential",
+      "name": "stage-2-quantum-variations-delay",
+      "steps": [
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m05-variations-forensic-valuation",
+            "prompt": "Price and substantiate all instructed variations (underpinning, steel beam modifications, architectural changes).",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m06-delay-extension-of-time",
+            "prompt": "Conduct critical path EOT analysis for structural design revisions and party wall award delays.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m07-loss-and-expense",
+            "prompt": "Quantify direct loss and expense under JCT cl 4.8 (extended site management, scaffolding, plant hire).",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m08-true-value-final-account",
+            "prompt": "Compile true value final account ledger totaling gross valuation less certified payments received.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "sequential",
+      "name": "stage-3-pre-action-and-anb-nomination",
+      "steps": [
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m09-tcc-letter-of-claim",
+            "prompt": "Draft formal TCC Letter of Claim specifying statutory debt and alternative true value adjudication.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m10-notice-of-adjudication",
+            "prompt": "Draft formal Notice of Adjudication under Scheme for Construction Contracts 1998 (single dispute rule).",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m11-anb-application",
+            "prompt": "Submit ANB application to RICS / TeCSA for urgent adjudicator nomination within statutory 5 days.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m12-referral-notice-assembly",
+            "prompt": "Assemble comprehensive Referral Notice with legal case law citations and evidentiary appendices.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "sequential",
+      "name": "stage-4-defenses-and-enforcement",
+      "steps": [
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m13-pearce-high-defect-bar",
+            "prompt": "Establish Pearce & High v Baxter defense against employer allegations of alleged defective works.",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m14-without-prejudice-calderbank",
+            "prompt": "Formulate Calderbank settlement proposal with statutory interest and costs indemnity.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m15-tcc-cpr-part8-enforcement",
+            "prompt": "Prepare TCC CPR Part 8 / Part 24 High Court summary judgment application under Macob v Morrison.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m16-charging-order-and-freezing",
+            "prompt": "Draft Interim Charging Order application over 29 Malvern Road property and third-party bank debt order.",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "sequential",
+      "name": "stage-5-adjudication-decision-and-closeout",
+      "steps": [
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m17-interest-calculation",
+            "prompt": "Calculate Late Payment of Commercial Debts (Interest) Act 1998 statutory interest (8% + BoE base rate).",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m18-adjudicator-fees-indemnity",
+            "prompt": "Draft demand for full indemnity of adjudicator fees and nominating body application costs.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m19-multi-channel-service-dispatch",
+            "prompt": "Dispatch full legal pack via Royal Mail Special Delivery tracked, 1st class post, and email.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "m20-final-bench-unanimous-approval",
+            "prompt": "Execute Chief Legal Agent unanimous sign-off across all factual, statutory, and case-law proofs.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        }
+      ]
+    }
+  ]
+}

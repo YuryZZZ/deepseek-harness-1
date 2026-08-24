@@ -1,0 +1,236 @@
+{
+  "name": "30wr-20node-mega-adjudication",
+  "description": "30 Wetherell Road 20-Node Mega Multi-Agent Adjudication and TCC High Court Enforcement Pipeline",
+  "nodes": [
+    {
+      "kind": "sequential",
+      "name": "stage-1-intake-and-discovery",
+      "steps": [
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n01-contract-privity-audit",
+            "prompt": "Audit contract terms and corporate privity under RIBA DBC 2018 (Clauses 7.1-7.16, 8.1-8.4) for Red Square Group Ltd (11099300).",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n02-whatsapp-extraction",
+            "prompt": "Extract 1,162 WhatsApp/SMS messages establishing Perrin site lockout and client repossession on 13-14 Jan 2025.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n03-email-bias-audit",
+            "prompt": "Audit 1,007 project emails for CA bias and verify Perrin 22-Jan-2025 admission: 'can't see where £33k comes from'.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n04-cert23-payless-audit",
+            "prompt": "Audit Payment Certificate 23 (£4,297.13 net ex VAT) and prove lack of valid Pay Less Notice under s.111 HGCRA 1996.",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "sequential",
+      "name": "stage-2-quantum-and-delay-forensics",
+      "steps": [
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n05-variations-repricing",
+            "prompt": "Re-price 37 detailed Change Orders totaling £39,374.49 ex VAT (£47,249.39 inc VAT) per RIBA DBC valuation rules.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n06-scl-delay-prevention",
+            "prompt": "Conduct 101-day SCL critical path delay analysis (5 Oct 2024 to 14 Jan 2025) and establish prevention principle under Multiplex v Honeywell.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n07-prelims-prolongation",
+            "prompt": "Substantiate preliminaries and prolongation claim under Item 11.01 (£2,000/mo) and CO-42 £6,000.00 prolongation rate.",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n08-final-account-reconciliation",
+            "prompt": "Reconcile Master Final Account: £188,519.80 gross - £160,442.07 paid = £28,077.73 ex VAT (£33,693.28 inc VAT).",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "sequential",
+      "name": "stage-3-pre-action-and-demand",
+      "steps": [
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n09-tcc-letter-of-claim",
+            "prompt": "Draft formal TCC Pre-Action Protocol Letter of Claim compliant with TCC 2nd Edition and CPR Part 8/24 standards.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n10-section-111-demand",
+            "prompt": "Formulate 7-day statutory debt demand for £5,156.56 inc VAT + £838.45 interest = £5,995.01 immediately payable.",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n11-proof-of-service",
+            "prompt": "Prepare multi-channel proof of service dispatch pack (Royal Mail Special Delivery tracked + 1st class + email).",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n12-title-asset-audit",
+            "prompt": "Audit Land Registry title for 30 Wetherell Road and confirm unencumbered equity position for charging order enforcement.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "sequential",
+      "name": "stage-4-riba-adjudication-and-defense",
+      "steps": [
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n13-notice-of-adjudication",
+            "prompt": "Formulate RIBA Notice of Adjudication under DBC Item N; verify statutory compliance per Bryen & Langley v Boston.",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n14-riba-anb-appointment",
+            "prompt": "Prepare RIBA Nominating Body ANB application, nominate adjudicator, and remit £350 ANB nomination fee.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n15-referral-bundle-ingest",
+            "prompt": "Assemble 18-dossier Referral Notice and Master Evidence Bundle for service within 7 days of Notice.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n16-defect-defense-shield",
+            "prompt": "Deploy Pearce & High v Baxter defense shield against employer defects claims where contractor was wrongfully denied access to rectify.",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "sequential",
+      "name": "stage-5-enforcement-and-signoff",
+      "steps": [
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n17-calderbank-settlement-playbook",
+            "prompt": "Draft Without Prejudice Calderbank settlement offer for £28,500.00 inc VAT with walk-away floor £22,500.00.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n18-tcc-summary-enforcement",
+            "prompt": "Prepare 14-day TCC CPR Part 8 / Part 24 summary enforcement application pack under Macob v Morrison strict rule.",
+            "model": "kimi-k2.7-highspeed",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n19-charging-order-engine",
+            "prompt": "Prepare Interim Charging Order application over 30 Wetherell Road and third-party bank debt freezing orders.",
+            "model": "gemini-3.7-flash",
+            "provider": "litellm"
+          }
+        },
+        {
+          "kind": "step",
+          "step": {
+            "kind": "llm",
+            "name": "n20-unanimous-bench-signoff",
+            "prompt": "Execute Chief Adjudication Agent unanimous sign-off across all legal grounds, statutory quantum, and procedural proofs.",
+            "model": "gpt-5.6-sol",
+            "provider": "litellm"
+          }
+        }
+      ]
+    }
+  ]
+}
