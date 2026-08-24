@@ -23,13 +23,15 @@
     - id: tool-langfuse
       name: '@deepseek-ai/dsh-tool-langfuse'
 
-    # NOTE: langfuse-ingest (record the harness' own sessions into Langfuse) is a
-    # sessionTelemetry BACKEND. The base profile already mounts the OTel backend,
-    # and the seam allows exactly one — enable langfuse-ingest only in a profile
-    # that removes/replaces `@deepseek-ai/dsh-session-telemetry-otel`.
-    # - id: langfuse-ingest
-    #   name: '@deepseek-ai/dsh-langfuse-ingest'
-    #   config: { tracePrefix: 'legalai-dsh', tags: ['legal-agent-v4', 'production'] }
+    # Automatic session telemetry ingest into Langfuse
+    - id: langfuse-ingest
+      name: '@deepseek-ai/dsh-langfuse-ingest'
+      config:
+        tracePrefix: 'legalai-dsh'
+        tags:
+          - 'legal-agent-v4'
+          - 'adjudication'
+          - 'production'
 
     # LangGraph/LangChain flow intelligence: flow-design knowledge + tools to
     # reconstruct and design multi-node flows, monitored by the Langfuse rows above.

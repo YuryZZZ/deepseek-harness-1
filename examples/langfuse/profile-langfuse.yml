@@ -1,0 +1,38 @@
+# Full Langfuse + LangGraph + Auto-Ingest Profile Patch
+#
+# This patch enables:
+# 1. @deepseek-ai/dsh-langfuse (read/analyze/write/record metrics)
+# 2. @deepseek-ai/dsh-tool-langfuse (8 Langfuse agent tools)
+# 3. @deepseek-ai/dsh-langgraph (flow design, execution, patterns)
+# 4. @deepseek-ai/dsh-langfuse-ingest (auto-records every session trace to Langfuse)
+#
+# Usage:
+#   dsh --profile headless --patch examples/langfuse/profile-langfuse.yml
+
+- remove:
+    - '@deepseek-ai/dsh-session-telemetry-otel'
+
+- insert:
+    - id: langfuse
+      name: '@deepseek-ai/dsh-langfuse'
+      config:
+        baseUrl: 'https://langfuse-server-699552818896.us-central1.run.app'
+        publicKey: !!js process.env.LANGFUSE_PUBLIC_KEY
+        secretKey: !!js process.env.LANGFUSE_SECRET_KEY
+        projectId: 'LegalAI-Adjudication'
+        pollIntervalMs: 300000
+
+    - id: tool-langfuse
+      name: '@deepseek-ai/dsh-tool-langfuse'
+
+    - id: langfuse-ingest
+      name: '@deepseek-ai/dsh-langfuse-ingest'
+      config:
+        tracePrefix: 'legalai-dsh'
+        tags:
+          - 'legal-agent-v4'
+          - 'adjudication'
+          - 'production'
+
+    - id: langgraph
+      name: '@deepseek-ai/dsh-langgraph'

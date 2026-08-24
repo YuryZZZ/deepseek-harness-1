@@ -14,10 +14,10 @@
 import z from '@deepseek-ai/schemastery'
 import type { Context } from '@deepseek-ai/cordis'
 import {
-  SessionTelemetryBackend,
   SessionTelemetryCoordinator,
   type SessionTelemetryRecord,
   type SessionTelemetrySharingStatus,
+  type SessionTelemetrySink,
 } from '@deepseek-ai/dsh-session-telemetry'
 import type { LangfuseIngestionEvent, LangfuseService } from '@deepseek-ai/dsh-langfuse'
 
@@ -97,11 +97,10 @@ export function mapLedgerRecordToEvents(
 
 /**
  * Records the harness' own session events into Langfuse via the ingestion API.
- * Loaded as a plugin, it registers under `ctx.sessionTelemetry` (one backend
- * per context).
+ * Attaches as an active SessionTelemetrySink via SessionTelemetryCoordinator.
  */
-export class LangfuseIngestBackend extends SessionTelemetryBackend {
-  static inject = ['langfuse']
+export class LangfuseIngestBackend implements SessionTelemetrySink {
+  static inject = ['langfuse', 'sessions']
 
   static Config: z<Config> = Config
 
@@ -112,14 +111,13 @@ export class LangfuseIngestBackend extends SessionTelemetryBackend {
   private readonly state: MapState = { emittedTraces: new Set(), counter: 0 }
 
   constructor(ctx: Context, config: Config) {
-    super(ctx)
     this.langfuse = ctx.langfuse
     this.tracePrefix = config.tracePrefix ?? 'dsh'
     this.tags = config.tags ?? []
     new SessionTelemetryCoordinator(ctx, this, 'live')
   }
 
-  override get sharing(): SessionTelemetrySharingStatus {
+  get sharing(): SessionTelemetrySharingStatus {
     return 'full'
   }
 
@@ -128,18 +126,18 @@ export class LangfuseIngestBackend extends SessionTelemetryBackend {
    * network send happens on {@link flush} / {@link shutdown}.
    * @param record - the logical record to report.
    */
-  override emit(record: SessionTelemetryRecord): void {
+  emit(record: SessionTelemetryRecord): void {
     if (record.channel !== 'ledger') return
     this.queue.push(...mapLedgerRecordToEvents(record, this.tracePrefix, this.tags, this.state))
   }
 
   /** Drain the queue into Langfuse; fires on the coordinator's `session/flush` hint. */
-  override flush(): void {
+  flush(): void {
     void this.drain()
   }
 
   /** Flush queued events and await quiescence. */
-  override async shutdown(): Promise<void> {
+  async shutdown(): Promise<void> {
     await this.drain()
   }
 
