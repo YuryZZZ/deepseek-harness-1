@@ -48,9 +48,12 @@ export function createTransport(config: Config): Transport {
         { requestInit: { headers: config.headers } },
       ) as Transport
     case 'sse':
+      // SSE is deprecated by the SDK but still required for legacy SSE servers
+      // (e.g. mcp-cloud-hub) during the migration to streamable-http.
+      // oxlint-disable-next-line typescript/no-deprecated
       return new SSEClientTransport(
         new URL(config.url),
         { requestInit: { headers: config.headers } },
-      ) as Transport
+      )
   }
 }
