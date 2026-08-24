@@ -309,6 +309,10 @@
     { "path": "./packages/lsp/lsp" },
     { "path": "./packages/lsp/lsp-stdio" },
     { "path": "./packages/lsp/tool-lsp" },
+    { "path": "./packages/langfuse/langfuse" },
+    { "path": "./packages/langfuse/tool-langfuse" },
+    { "path": "./packages/langfuse/langfuse-ingest" },
+    { "path": "./packages/langgraph/langgraph" },
     { "path": "./apps/cli" }
   ]
 }
