@@ -189,6 +189,7 @@
     { "path": "./packages/langfuse/langfuse" },
     { "path": "./packages/langfuse/tool-langfuse" },
     { "path": "./packages/langfuse/langfuse-ingest" },
+    { "path": "./packages/langgraph/langgraph" },
     { "path": "./packages/core/agent-tool-presentation" },
     { "path": "./packages/skill/skill" },
     { "path": "./packages/skill/skill-badge" },
